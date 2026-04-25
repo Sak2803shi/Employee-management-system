@@ -7,6 +7,10 @@ import com.emp.mgt.sys.entity.Employee;
 import com.emp.mgt.sys.repository.DepartmentRepository;
 import com.emp.mgt.sys.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +33,28 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
+    // Get employees with pagination
+    public Page<EmployeeDTO> getEmployeesWithPagination(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return employeeRepository.findAll(pageable)
+                .map(EmployeeMapper::toDTO);
+    }
+
+    // Search employees
+    public Page<EmployeeDTO> searchEmployees(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("firstName"));
+        return employeeRepository.searchEmployees(keyword, pageable)
+                .map(EmployeeMapper::toDTO);
+    }
+
+    // Get employees by department
+    public List<EmployeeDTO> getEmployeesByDepartment(String departmentName) {
+        return employeeRepository.findByDepartmentName(departmentName)
+                .stream()
+                .map(EmployeeMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     // Get employee by ID
     public EmployeeDTO getEmployeeById(Long id) {
         Employee employee = employeeRepository.findById(id)
@@ -38,6 +64,9 @@ public class EmployeeService {
 
     // Create new employee
     public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
+        if (employeeRepository.existsByEmail(employeeDTO.getEmail())) {
+            throw new RuntimeException("Email already exists: " + employeeDTO.getEmail());
+        }
         Employee employee = EmployeeMapper.toEntity(employeeDTO);
         if (employeeDTO.getDepartmentId() != null) {
             Department department = departmentRepository.findById(employeeDTO.getDepartmentId())
