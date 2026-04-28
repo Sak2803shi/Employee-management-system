@@ -61,9 +61,11 @@ const Dashboard = () => {
                         <p className="text-gray-500 mt-2">Manage all departments</p>
                         <p className="text-4xl font-bold text-gray-800 mt-4">{departmentCount}</p>
                     </div>
-                    <div className="bg-white p-6 rounded-lg shadow">
+                    <div
+                        onClick={() => navigate('/profile')}
+                        className="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-md transition">
                         <h3 className="text-lg font-bold text-purple-600">My Profile</h3>
-                        <p className="text-gray-500 mt-2">Logged in as</p>
+                        <p className="text-gray-500 mt-2">View and edit profile</p>
                         <p className="text-2xl font-bold text-gray-800 mt-4">{user?.username}</p>
                         <p className="text-sm text-gray-500 mt-1">{user?.role}</p>
                     </div>

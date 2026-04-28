@@ -6,6 +6,7 @@ import EmployeeList from './pages/EmployeeList';
 import EmployeeForm from './pages/EmployeeForm';
 import DepartmentList from './pages/DepartmentList';
 import DepartmentForm from './pages/DepartmentForm';
+import Profile from './pages/Profile';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -53,6 +54,11 @@ const App = () => {
                     <Route path="/departments/edit/:id" element={
                         <ProtectedRoute>
                             <DepartmentForm />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <Profile />
                         </ProtectedRoute>
                     } />
                     <Route path="/" element={<Navigate to="/login" />} />

@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8081/api';
 
-// Create axios instance
 const api = axios.create({
     baseURL: API_BASE_URL,
     headers: {
@@ -10,7 +9,6 @@ const api = axios.create({
     },
 });
 
-// Add JWT token to every request automatically
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
@@ -26,6 +24,7 @@ api.interceptors.request.use(
 export const authService = {
     login: (credentials) => api.post('/auth/login', credentials),
     register: (userData) => api.post('/auth/register', userData),
+    changePassword: (data) => api.post('/auth/change-password', data),
 };
 
 // Employee services
