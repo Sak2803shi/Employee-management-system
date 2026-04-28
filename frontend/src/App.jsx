@@ -4,6 +4,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import EmployeeList from './pages/EmployeeList';
 import EmployeeForm from './pages/EmployeeForm';
+import DepartmentList from './pages/DepartmentList';
+import DepartmentForm from './pages/DepartmentForm';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -36,6 +38,21 @@ const App = () => {
                     <Route path="/employees/edit/:id" element={
                         <ProtectedRoute>
                             <EmployeeForm />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/departments" element={
+                        <ProtectedRoute>
+                            <DepartmentList />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/departments/add" element={
+                        <ProtectedRoute>
+                            <DepartmentForm />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/departments/edit/:id" element={
+                        <ProtectedRoute>
+                            <DepartmentForm />
                         </ProtectedRoute>
                     } />
                     <Route path="/" element={<Navigate to="/login" />} />
