@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+
+  # MySQL Database
+  ems-db:
+    image: mysql:8.0
+    container_name: ems-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: ems
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ems-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  ems-backend:
+    build: ./backend
+    container_name: ems-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://ems-db:3306/ems?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root123
+    ports:
+      - "8081:8081"
+    depends_on:
+      ems-db:
+        condition: service_healthy
+    networks:
+      - ems-network
+
+  # React Frontend
+  ems-frontend:
+    build: ./frontend
+    container_name: ems-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - ems-backend
+    networks:
+      - ems-network
+
+networks:
+  ems-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
