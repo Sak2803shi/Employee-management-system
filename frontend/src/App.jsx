@@ -22,6 +22,7 @@ const App = () => {
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/dashboard" element={
                         <ProtectedRoute>
                             <Dashboard />
@@ -54,7 +55,7 @@ const App = () => {
                     } />
                     <Route path="/departments/edit/:id" element={
                         <ProtectedRoute>
-                            <DepagrtmentForm />
+                            <DepartmentForm />
                         </ProtectedRoute>
                     } />
                     <Route path="/profile" element={
@@ -63,7 +64,6 @@ const App = () => {
                         </ProtectedRoute>
                     } />
                     <Route path="/" element={<Navigate to="/login" />} />
-                    <Route path="/register" element={<Register />} />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>
