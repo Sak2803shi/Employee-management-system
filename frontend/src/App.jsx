@@ -7,6 +7,7 @@ import EmployeeForm from './pages/EmployeeForm';
 import DepartmentList from './pages/DepartmentList';
 import DepartmentForm from './pages/DepartmentForm';
 import Profile from './pages/Profile';
+import Register from './pages/Register';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -53,7 +54,7 @@ const App = () => {
                     } />
                     <Route path="/departments/edit/:id" element={
                         <ProtectedRoute>
-                            <DepartmentForm />
+                            <DepagrtmentForm />
                         </ProtectedRoute>
                     } />
                     <Route path="/profile" element={
@@ -62,6 +63,7 @@ const App = () => {
                         </ProtectedRoute>
                     } />
                     <Route path="/" element={<Navigate to="/login" />} />
+                    <Route path="/register" element={<Register />} />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>
