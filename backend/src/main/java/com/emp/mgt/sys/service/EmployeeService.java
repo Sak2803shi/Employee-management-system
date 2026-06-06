@@ -1,11 +1,11 @@
 package com.emp.mgt.sys.service;
 
-import com.emp.mgt.sys.dto.EmployeeDTO;
-import com.emp.mgt.sys.dto.EmployeeMapper;
-import com.emp.mgt.sys.entity.Department;
-import com.emp.mgt.sys.entity.Employee;
-import com.emp.mgt.sys.repository.DepartmentRepository;
-import com.emp.mgt.sys.repository.EmployeeRepository;
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,8 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.emp.mgt.sys.dto.EmployeeDTO;
+import com.emp.mgt.sys.dto.EmployeeMapper;
+import com.emp.mgt.sys.entity.Department;
+import com.emp.mgt.sys.entity.Employee;
+import com.emp.mgt.sys.repository.DepartmentRepository;
+import com.emp.mgt.sys.repository.EmployeeRepository;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class EmployeeService {
@@ -99,4 +105,34 @@ public class EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + id));
         employeeRepository.deleteById(id);
     }
+    
+ // Export employees to CSV
+    public void exportEmployeesToCSV(HttpServletResponse response) throws IOException {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=employees.csv");
+
+        List<Employee> employees = employeeRepository.findAll();
+
+        CSVPrinter csvPrinter = new CSVPrinter(response.getWriter(),
+                CSVFormat.DEFAULT.withHeader(
+                        "ID", "First Name", "Last Name",
+                        "Email", "Job Title", "Phone", "Department"
+                ));
+
+        for (Employee emp : employees) {
+            csvPrinter.printRecord(
+                    emp.getId(),
+                    emp.getFirstName(),
+                    emp.getLastName(),
+                    emp.getEmail(),
+                    emp.getJobTitle(),
+                    emp.getPhone(),
+                    emp.getDepartment() != null ? emp.getDepartment().getName() : "N/A"
+            );
+        }
+
+        csvPrinter.flush();
+        csvPrinter.close();
+    }
+    
 }

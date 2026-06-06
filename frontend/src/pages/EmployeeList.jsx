@@ -9,7 +9,6 @@ const EmployeeList = () => {
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
 
-    // Fetch all employees on load
     useEffect(() => {
         fetchEmployees();
     }, []);
@@ -51,6 +50,29 @@ const EmployeeList = () => {
         }
     };
 
+    const handleExportCSV = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(
+                'http://localhost:8081/api/employees/export/csv',
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'employees.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            setError('Failed to export CSV');
+        }
+    };
+
     if (loading) return (
         <div className="flex items-center justify-center min-h-screen">
             <p className="text-gray-500 text-lg">Loading...</p>
@@ -74,12 +96,20 @@ const EmployeeList = () => {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">Employees</h2>
-                    <button
-                        onClick={() => navigate('/employees/add')}
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-bold"
-                    >
-                        + Add Employee
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleExportCSV}
+                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-bold"
+                        >
+                            ⬇ Export CSV
+                        </button>
+                        <button
+                            onClick={() => navigate('/employees/add')}
+                            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-bold"
+                        >
+                            + Add Employee
+                        </button>
+                    </div>
                 </div>
 
                 {/* Search */}
@@ -101,7 +131,7 @@ const EmployeeList = () => {
 
                 {/* Table */}
                 <div className="bg-white rounded-lg shadow overflow-hidden overflow-x-auto">
-                        <table className="w-full min-w-max">
+                    <table className="w-full min-w-max">
                         <thead className="bg-gray-50 border-b">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
